@@ -1,0 +1,37 @@
+# Local .terraform directories
+.terraform/
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Log files
+*.log
+
+# .tfvars files (may contain sensitive data)
+*.tfvars
+*.tfvars.json
+
+# Zip files (Terraform creates zip of the Python run-time scripts)
+*.zip
+
+# Editor configurations
+.vscode/
+.idea/
+
+# Build results and package dependencies
+__pycache__/
+requirements.txt
+dependencies/
+
+# .env files (may contain credentials)
+*.env
+
+# Temporary drawio files
+*.drawio.bkp
+*.drawio.dtmp
+
+# Teamcity Project files
+/.teamcity/lib/
+/.teamcity/target/
+/.teamcity/*.iml

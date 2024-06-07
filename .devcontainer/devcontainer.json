@@ -1,0 +1,33 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
+{
+    "name": "Ubuntu",
+    "image": "mcr.microsoft.com/devcontainers/base:1.0.23-ubuntu-22.04",
+    "features": {
+        "ghcr.io/devcontainers/features/aws-cli:1": {},
+        "ghcr.io/devcontainers-contrib/features/terraform-asdf:2": {},
+        "ghcr.io/devcontainers/features/python:1": {
+            "installTools": true,
+            "version": "3.10.6"
+        },
+        "ghcr.io/devcontainers-contrib/features/poetry:2": {
+            "version": "1.4.1"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "GitLab.gitlab-workflow",
+                "eamodio.gitlens",
+                "hashicorp.terraform",
+                "amazonwebservices.aws-toolkit-vscode",
+                "ms-python.pylint",
+                "ms-python.python",
+                "ms-python.black-formatter",
+                "ms-python.vscode-pylance",
+                "ms-python.isort"
+            ]
+        }
+    },
+    "runArgs": ["--env-file",".devcontainer/devcontainer.env"]
+}
