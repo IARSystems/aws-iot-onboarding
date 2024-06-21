@@ -27,3 +27,15 @@ variable "thing_group_name" {
   type        = string
   default     = "iar-thing-group"
 }
+
+variable "public_key" {
+  type        = string
+  nullable    = false
+  description = "\nThe public part of the key used to sign your production records (in hex string format)."
+}
+
+variable "iot_policy" {
+  description = "IoT policy to be attached to registered devices"
+  type        = string
+  default     = "iar-thing-group-policy"
+}

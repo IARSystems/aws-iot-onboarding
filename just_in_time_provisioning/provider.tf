@@ -6,7 +6,7 @@ terraform {
       version = "~> 5.41.0"
     }
     null = {
-      source = "hashicorp/null"
+      source  = "hashicorp/null"
       version = "~> 3.2.1"
     }
   }

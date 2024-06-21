@@ -85,7 +85,7 @@ class ProductionRecord:
         """Delete the production record file from the S3 bucket."""
         boto3.client("s3").delete_object(Bucket=self._bucket_name, Key=self._key)
 
-    def onboard_device(self, thing_group_name: str, thing_group_arn: str):
+    def onboard_device(self, thing_group_name: str):
         """Onboard the device to the AWS IoT Core service."""
         iot_client = boto3.client("iot")
         response = iot_client.create_thing(thingName=self.device_id)
@@ -93,7 +93,8 @@ class ProductionRecord:
 
         iot_client.add_thing_to_thing_group(
             thingGroupName=thing_group_name,
-            thingGroupArn=thing_group_arn,
+            thingGroupArn=iot_client.describe_thing_group(
+                thingGroupName=thing_group_name)["thingGroupArn"],
             thingName=self.device_id,
             thingArn=thing_arn,
         )
@@ -113,18 +114,8 @@ def lambda_handler(event, _context):
     public key in the config file), the device is onboarded. Otherwise, the
     verification fails and an exception bubbles up to AWS Lambda before the
     "Thing" and "Certificate" resources are created. If device onboarding is
-    successful, the production record is deleted fro the s3 bucket.
+    successful, the production record is deleted from the s3 bucket.
     """
     production_record = ProductionRecord.from_event(event)
 
-    thing_group_name = os.environ["THING_GROUP_NAME"]
-    iot_client = boto3.client("iot")
-
-    try:
-        response = iot_client.describe_thing_group(thingGroupName=thing_group_name)
-    except iot_client.exceptions.ResourceNotFoundException:
-        response = iot_client.create_thing_group(thingGroupName=thing_group_name)
-
-    production_record.onboard_device(
-        thing_group_name=thing_group_name, thing_group_arn=response["thingGroupArn"]
-    )
+    production_record.onboard_device(thing_group_name=os.environ["THING_GROUP_NAME"])

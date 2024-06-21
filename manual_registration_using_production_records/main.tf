@@ -8,12 +8,6 @@ resource "null_resource" "deployment_package" {
   }
 }
 
-variable "public_key" {
-  type     = string
-  nullable = false
-  description = "The public key used to validate production record signatures"
-}
-
 # Create a lambda function and upload the deployment package zip file.
 resource "aws_lambda_function" "production_record_processing" {
   function_name = var.lambda_function_name
@@ -32,8 +26,8 @@ resource "aws_lambda_function" "production_record_processing" {
   }
   environment {
     variables = {
-      PUBLIC_KEY=var.public_key,
-      THING_GROUP_NAME=var.thing_group_name
+      PUBLIC_KEY       = var.public_key,
+      THING_GROUP_NAME = var.thing_group_name
     }
   }
 }
@@ -67,7 +61,7 @@ resource "aws_iam_policy" "iot_onboarding_iam_polices" {
     Version = "2012-10-17",
     Statement = [
       {
-        Action   = [
+        Action = [
           "s3:GetObject",
           "s3:DeleteObject",
           "iot:CreateThing",
@@ -75,7 +69,8 @@ resource "aws_iam_policy" "iot_onboarding_iam_polices" {
           "iot:CreateThingGroup",
           "iot:AddThingToThingGroup",
           "iot:RegisterCertificateWithoutCA",
-          "iot:AttachThingPrincipal"
+          "iot:AttachThingPrincipal",
+          "iot:AttachPolicy"
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -179,7 +174,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 
 # Add permissions for S3 bucket to trigger the Lambda Function.
 resource "aws_lambda_permission" "allow_bucket" {
-  statement_id = "AllowExecutionFromS3Bucket"
+  statement_id  = "AllowExecutionFromS3Bucket"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.production_record_processing.function_name
   principal     = "s3.amazonaws.com"
@@ -189,4 +184,41 @@ resource "aws_lambda_permission" "allow_bucket" {
       aws_lambda_function.production_record_processing
     ]
   }
+}
+
+resource "aws_iot_policy" "iot_policy" {
+  name = var.iot_policy
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "iot:*"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+# Create an iot policy and attach it to the thing group.
+resource "aws_iot_thing_group" "iot_thing_group" {
+  name = var.thing_group_name
+}
+
+data "aws_iam_policy_document" "pubsub" {
+  statement {
+    effect    = "Allow"
+    actions   = ["iot:*"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iot_policy" "pubsub" {
+  name   = "PubSubToAnyTopic"
+  policy = data.aws_iam_policy_document.pubsub.json
+}
+
+resource "aws_iot_policy_attachment" "att" {
+  policy = aws_iot_policy.pubsub.name
+  target = aws_iot_thing_group.iot_thing_group.arn
 }

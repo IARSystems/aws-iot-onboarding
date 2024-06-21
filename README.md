@@ -1,85 +1,46 @@
-# AWS-Terraform-Onboarding
+# AWS Cloud Onboarding
 
-This repository explains the AWS cloud onboarding workflow that follows
-device provisioning with SDP, using the production records to register
-each device.
+Further to the AWS Cloud Onboarding application note, this repository contains
+implementations for:
 
-![Alt text for image](Architecture.drawio.png)
+- Manual registration without CA (using eSecIP production records)
+- Just-in-time provisioning
+
+Individual README.md files can be found for each implementation in the
+```manual-registration-using-production-records``` and
+```just-in-time-provisioning``` folders respectively.
 
 ## AWS Account Setup
 
-Create an AWS account. You should either log in as the Root User with
-full permissions or, more correctly, create a User with the minimum set of
-permissions to run this project. The minimum permission policies required
-for the User are:
+Before running the cloud onboarding implementations, you first must create an
+AWS account. The AWS account User will require the following permissions:
 
-`AmazonS3FullAccess`
-`AWSLambda_FullAccess`
-`IAMFullAccess`
-`AWSIoTConfigAccess`
-`IAMAccessAnalyzerFullAccess`
+- `AmazonS3FullAccess`
+- `AWSLambda_FullAccess`
+- `IAMFullAccess`
+- `AWSIoTConfigAccess`
+- `IAMAccessAnalyzerFullAccess`
 
-## Project Configuration
+Create Access Key credentials (ID and secret) for the AWS User. You will then
+need to follow the steps below to bring in the Access Key ID and Access Key
+Secret into the devcontainer as environment variables.
 
-Create an Access Key for the AWS User. Run the following commands from the
-repository root to configure the devcontainer to pull in the User
-credentials as environment variables:
+Assuming you are using a bash terminal executing from the repository root:
 
 ```bash
-cp .devcontainer/devcontainer.env.example .devcontainer/devcontainer.env
-sed -i 's/=id/=<youraccesskeyid>/' .devcontainer/devcontainer.env
-sed -i 's/=secret/=<yoursecretaccesskey>/' .devcontainer/devcontainer.env
-sed -i 's/=public_key/=<yourpublicsigningkey>/' .devcontainer/devcontainer.env
-```
-When you open the repository in VSCode it will now automatically pull in your
-User's credentials. The .gitignore file is set to ignore all .env files avoid
-this information accidentally being committed to version control.
+# Create a new environment variable file and insert your id and secret
+# (Modify the commands with your own id and secret)
+echo AWS_ACCESS_KEY_ID=<your access key id> > .devcontainer/devcontainer.env
+echo AWS_SECRET_ACCESS_KEY=<your access key secret> >> .devcontainer/devcontainer.env
 
-## Running Terraform to Create Onboarding Infrastructure
-
-Run the following sequence of commands to set up the onboarding infrastructure:
-
-```bash
-cd resourcemanagement
-terraform init
-terraform apply
-```
-Terraform will print the resources it is going to create on your AWS account
-on the terminal. Type `yes` to confirm the creation of the resources. Your
-onboarding service is now ready to receive production record files.
-
-You can upload production records to the S3 bucket in the AWS cloud console or
-using the AWS CLI command below:
-
-```bash
-aws s3 cp <your .prd file> s3://<your bucket name>
+# Modify devcontainer.json so use your new environment file
+sed -i 's/devcontainer.env.example/devcontainer.env/' .devcontainer/devcontainer.json
 ```
 
-## Bringing Down the Onboarding Infrastructure
+When you rebuild the devcontainer, it will now automatically pull in your
+Access Key ID and Access Key Secret as environment variables within the
+container.
 
-The following command will destroy the Lambda function and the S3 bucket:
-
-```bash
-terraform destroy
-```
-To delete any Thing and Certificate resources created by the Lambda function,
-run the delete_iot_resources.py script:
-
-```bash
-poetry install
-poetry run python delete_iot_resources.py <your resource region> <your thing group name>
-```
-
-## Changing Default Terraform Variables
-
-The variables.tf file declares variables related to AWS resource creation
-and assigns default values. If you would like to change the default values,
-it is recommended to create a terraform.tfvars file in this directory for
-variable reassignment, rather than changing the default values in this
-file. For example, to create resources in a different region, create a
-terraform.tfvars file and add the following:
-
-aws_region = "us-east-1"
-
-Note that .tfvars files should not be added to version control for security
-reasons.
+SECURITY WARNING: .gitignore file is set to ignore all .env files in order to
+avoid your Access Key credentials accidentally being committed to version
+control.
