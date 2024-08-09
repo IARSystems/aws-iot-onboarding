@@ -7,23 +7,23 @@ variable "aws_region" {
 variable "jitp_iam_role" {
   description = "The role that the provisioning template will assume to register devices"
   type        = string
-  default     = "terraform-jitp-iam-role"
+  default     = "iar-jitp-iam-role"
 }
 
 variable "iot_policy" {
   description = "IoT policy to be attached to registered devices"
   type        = string
-  default     = "terraform-jitp-iot-policy"
+  default     = "iar-jitp-iot-policy"
 }
 
-variable "aws_account_num" {
+variable "provisioning_template" {
+  description = "Provisioning template defining actions to take during TLS connection"
   type        = string
-  nullable    = false
-  description = "\nYour unique AWS account number."
+  default     = "iar-jitp-provisioning-template"
 }
 
 variable "intermediate_cert" {
   type        = string
   nullable    = false
-  description = "\nThe Intermediate certificate that signed your device certificates (.pem format)."
+  description = "Path to the X509 certificate .pem file corresponding with the private key that signed each device certificate"
 }

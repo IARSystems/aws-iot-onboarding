@@ -18,7 +18,7 @@ AWS account. The AWS account User will require the following permissions:
 - `AmazonS3FullAccess`
 - `AWSLambda_FullAccess`
 - `IAMFullAccess`
-- `AWSIoTConfigAccess`
+- `AWSIoTFullAccess`
 - `IAMAccessAnalyzerFullAccess`
 
 Create Access Key credentials (ID and secret) for the AWS User. You will then
