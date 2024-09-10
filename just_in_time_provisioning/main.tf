@@ -15,7 +15,7 @@ resource "aws_iot_policy" "iot_policy" {
 }
 
 /* The IAM Role allows the template (defined below) permissions to create
-   Certificate resources on the IoT Core service. */
+   Certificate resources and attach policies on the IoT Core service. */
 resource "aws_iam_role" "iam_role" {
   name = var.jitp_iam_role
 
@@ -33,6 +33,12 @@ resource "aws_iam_role" "iam_role" {
   })
 }
 
+/* Attach IAM policy to the IAM role. */
+resource "aws_iam_role_policy_attachment" "iot_full_access_attach" {
+role       = aws_iam_role.iam_role.name
+policy_arn = "arn:aws:iam::aws:policy/AWSIoTConfigAccess"
+}
+
 /* The IoT Provisioning Template is of type JITP (just-in-time Provisioning).
    When a device contacts the server, assuming its device certificate is
    signed by the CA Certificate (defined below), the template is defined to
@@ -46,8 +52,7 @@ resource "aws_iot_provisioning_template" "provisioning_template" {
 
   template_body = jsonencode({
     Parameters = {
-      CommonName = { Type = "String" }
-      Id = { Type = "String" }
+      "AWS::IoT::Certificate::Id" = {Type = "String"}
     }
     Resources = {
       certificate = {
@@ -57,11 +62,11 @@ resource "aws_iot_provisioning_template" "provisioning_template" {
           Status = "Active"
         }
       }
-      policy_terraform-jitp-iot-policy = {
+      policy_iar-jitp-iot-policy = {
+        Type = "AWS::IoT::Policy"
         Properties = {
           PolicyName = var.iot_policy
         }
-        Type = "AWS::IoT::Policy"
       }
     }
   })
@@ -75,7 +80,7 @@ resource "aws_iot_ca_certificate" "ca_certificate" {
   active                  = true
   ca_certificate_pem      = file(var.intermediate_cert)
   allow_auto_registration = true
-  certificate_mode        = "SNI_ONLY" /* No verification certificate required */
+  certificate_mode        = "SNI_ONLY" /* No verification cert required */
   registration_config {
     template_name = var.provisioning_template
   }

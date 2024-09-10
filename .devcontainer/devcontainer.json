@@ -17,8 +17,6 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "GitLab.gitlab-workflow",
-                "eamodio.gitlens",
                 "hashicorp.terraform",
                 "amazonwebservices.aws-toolkit-vscode",
                 "ms-python.pylint",

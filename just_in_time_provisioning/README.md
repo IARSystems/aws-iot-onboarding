@@ -6,6 +6,8 @@ provisioning.
 ***Ensure that you have followed the Account Setup steps in the top level
 README before running this implementation.***
 
+![Alt text for image](Architecture.drawio.png)
+
 ## Running Terraform to Create Onboarding Infrastructure
 
 Open the repository as a devcontainer in VSCode and run the sequence of
