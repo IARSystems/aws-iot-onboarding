@@ -15,7 +15,7 @@ resource "aws_lambda_function" "production_record_processing" {
   runtime       = "python3.10"
   timeout       = 15
   role          = aws_iam_role.production_record_processing_role.arn
-  filename      = "deployment_package.zip"
+  filename      = "dependencies/deployment_package.zip"
   lifecycle {
     replace_triggered_by = [
       null_resource.deployment_package

@@ -35,8 +35,8 @@ resource "aws_iam_role" "iam_role" {
 
 /* Attach IAM policy to the IAM role. */
 resource "aws_iam_role_policy_attachment" "iot_full_access_attach" {
-role       = aws_iam_role.iam_role.name
-policy_arn = "arn:aws:iam::aws:policy/AWSIoTConfigAccess"
+  role       = aws_iam_role.iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSIoTConfigAccess"
 }
 
 /* The IoT Provisioning Template is of type JITP (just-in-time Provisioning).
