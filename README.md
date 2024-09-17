@@ -3,12 +3,12 @@
 Further to the AWS Cloud Onboarding application note, this repository contains
 implementations for:
 
-- Manual registration without CA (using eSecIP production records)
-- Just-in-time provisioning
+- Manual onboarding without CA (using eSecIP production records)
+- Just-in-time onboarding
 
 Individual README.md files can be found for each implementation in the
-```manual-registration-using-production-records``` and
-```just-in-time-provisioning``` folders respectively.
+```manual_onboarding_development```, ```manual_onboarding_production```
+and ```just_in_time_provisioning``` folders respectively.
 
 ## AWS Account Setup
 

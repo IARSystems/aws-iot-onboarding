@@ -1,4 +1,4 @@
-# Just-in-Time Provisioning
+# Just-in-Time Onboarding
 
 This README explains the AWS cloud onboarding workflow for just-in-time
 provisioning.

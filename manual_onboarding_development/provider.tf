@@ -18,7 +18,7 @@ provider "aws" {
   region = var.aws_region
   default_tags {
     tags = {
-      Project = "AWS Bulk Onboarding Solution"
+      Project = "AWS Manual Onboarding Development Solution"
       IaC     = "Terraform"
     }
   }
