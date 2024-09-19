@@ -58,7 +58,7 @@ terraform destroy
 ```
 
 To delete any Thing and Certificate resources created by the Lambda function,
-run the ````delete_things_in_group.py``` script found in the ```utils/```
+run the ```delete_things_in_group.py``` script found in the ```utils/```
 folder:
 
 ```bash
