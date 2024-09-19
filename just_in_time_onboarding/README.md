@@ -28,19 +28,19 @@ to the terminal. Type `yes` to confirm the creation of the resources.
 
 ## Bringing Down the Onboarding Infrastructure
 
-The following command will destroy the resources created in the section above:
-
-```bash
-terraform destroy
-```
-
-To delete any Thing and Certificate resources created by the Provisioning Template,
-run the ```delete_things_in_group.py``` script found in the ```utils/```
+First, delete any Thing and Certificate resources created by the Provisioning
+Template, run the ```delete_things_in_group.py``` script found in the ```utils/```
 folder:
 
 ```bash
 poetry install
 poetry run python delete_things_in_group.py <your resource region> <your thing group name>
+```
+
+Second, tear down the onboarding infrastructure:
+
+```bash
+terraform destroy
 ```
 
 ## Changing Default Terraform Variables

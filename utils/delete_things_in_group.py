@@ -62,7 +62,7 @@ def main():
                 response = iot_client.list_attached_policies(target=associated_principal)
                 for policy in response["policies"]:
                     iot_client.detach_principal_policy(
-                        policyName=policy, principal=associated_principal)
+                        policyName=policy["policyName"], principal=associated_principal)
                 iot_client.delete_certificate(certificateId=parts[1])
 
 
