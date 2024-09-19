@@ -1,7 +1,7 @@
 # Just-in-Time Onboarding
 
 This README explains the AWS cloud onboarding workflow for just-in-time
-provisioning.
+onboarding.
 
 ***Ensure that you have followed the Account Setup steps in the top level
 README before running this implementation.***
@@ -17,7 +17,7 @@ Note: You must provide the intermediate certificate corresponding with the
 private key that signed your IoT device certificates.
 
 ```bash
-cd just_in_time_provisioning
+cd just_in_time_onboarding
 echo intermediate_cert=\"<your intermediate certificate in .pem format>\" > terraform.tfvars
 terraform init
 terraform apply
@@ -32,6 +32,15 @@ The following command will destroy the resources created in the section above:
 
 ```bash
 terraform destroy
+```
+
+To delete any Thing and Certificate resources created by the Provisioning Template,
+run the ````delete_things_in_group.py``` script found in the ```utils/```
+folder:
+
+```bash
+poetry install
+poetry run python delete_things_in_group.py <your resource region> <your thing group name>
 ```
 
 ## Changing Default Terraform Variables

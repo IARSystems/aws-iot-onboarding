@@ -7,8 +7,7 @@ implementations for:
 - Just-in-time onboarding
 
 Individual README.md files can be found for each implementation in the
-```manual_onboarding_development```, ```manual_onboarding_production```
-and ```just_in_time_provisioning``` folders respectively.
+```manual_onboarding``` and ```just_in_time_onboarding``` folders respectively.
 
 ## AWS Account Setup
 

@@ -14,10 +14,15 @@ resource "aws_iot_policy" "iot_policy" {
   })
 }
 
+/* Create a Thing group in which to create Things. */
+resource "aws_iot_thing_group" "thing_group" {
+  name = var.thing_group
+}
+
 /* The IAM Role allows the template (defined below) permissions to create
    Certificate resources and attach policies on the IoT Core service. */
 resource "aws_iam_role" "iam_role" {
-  name = var.jitp_iam_role
+  name = var.iam_role
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -36,14 +41,13 @@ resource "aws_iam_role" "iam_role" {
 /* Attach IAM policy to the IAM role. */
 resource "aws_iam_role_policy_attachment" "iot_full_access_attach" {
   role       = aws_iam_role.iam_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSIoTConfigAccess"
+  policy_arn = "arn:aws:iam::aws:policy/AWSIoTFullAccess"
 }
 
 /* The IoT Provisioning Template is of type JITP (just-in-time Provisioning).
    When a device contacts the server, assuming its device certificate is
    signed by the CA Certificate (defined below), the template is defined to
-   automatically create a Certificate resource and attach the IoT Policy
-   defined above, allowing it to access the MQTT server. */
+   automatically create Thing and Certificate resources. */
 resource "aws_iot_provisioning_template" "provisioning_template" {
   name                  = var.provisioning_template
   provisioning_role_arn = aws_iam_role.iam_role.arn
@@ -53,8 +57,16 @@ resource "aws_iot_provisioning_template" "provisioning_template" {
   template_body = jsonencode({
     Parameters = {
       "AWS::IoT::Certificate::Id" = {Type = "String"}
+      "AWS::IoT::Certificate::CommonName" = {Type = "String"}
     }
     Resources = {
+      thing = {
+        Type = "AWS::IoT::Thing",
+        Properties = {
+          ThingName = { "Ref" = "AWS::IoT::Certificate::CommonName" }
+          ThingGroups = [ var.thing_group]
+        }
+      }
       certificate = {
         Type = "AWS::IoT::Certificate"
         Properties = {
